@@ -2,7 +2,7 @@
 "                             ***  PREAMBLE  ***                          "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" 
+"
 
 " Lots of inspiration from:
 " https://github.com/Valloric/dotfiles/blob/master/vim/vimrc.vim
@@ -17,7 +17,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-"let vimplug_root = $HOME . "/vim-config/plugged"
 call plug#begin('~/.vim/plugged')
 
 " solarized colorscheme
@@ -509,11 +508,11 @@ endif
 "                       ***  VIM-SNEAK  ***                         "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" these are the defaults. you can change them if you like the current 's' map
+" these are the defaults. you can change them if you want to keep the default 's' map
 "nmap s <Plug>Sneak_s
 "nmap S <Plug>Sneak_S
 
-" Replce f and t with 1-character sneak
+" Replace f and t with 1-character sneak
 nmap f <Plug>Sneak_f
 nmap F <Plug>Sneak_F
 nmap t <Plug>Sneak_t
