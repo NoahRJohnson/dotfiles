@@ -278,7 +278,7 @@ map <Space> <leader>
 noremap <leader>w :w<CR>
 
 " fast quit
-noremap <leader>q :q<CR>
+nnoremap <leader>q :q<CR>
 
 " <Leader>cd changes directory to location of current file
 noremap <leader>cd :cd %:p:h<CR>:pwd<CR>
