@@ -27,7 +27,6 @@ root: .
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
 pre_window:
 #  - zsh
-#  - pipenv shell
 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
 # tmux_options: -f ~/.tmux.mac.conf
@@ -40,26 +39,17 @@ pre_window:
 
 windows:
   - editor:
-      - pipenv shell vim .
-  - run:
+      - vim .
+  - build:
       layout: tiled
       panes:
-        - run_script:
-          - pipenv shell history -s python file_to_run
-        - tail_log:
-          - pipenv shell tail -f your_log_file
-        - static_view_log:
-          - pipenv shell vim -c Ex your_log_folder  # open file explorer
-  - console:
-      layout: even-vertical
-      panes:
-        - general:
-          - pipenv shell ls
-        - python-interpreter:
-          - pipenv shell python
+        - compile:
+          - history -s Cmake
+        - run:
+          - history -s ./test.exe
   - git:
       layout: even-vertical
       panes:
-        - pipenv shell git status
-        - pipenv shell git log
+        - git status
+        - git log
 

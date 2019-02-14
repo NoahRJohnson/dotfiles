@@ -38,20 +38,20 @@ This will ensure we get the most up-to-date version. You should see all "YES" wh
 mux doctor
 ```
 
-For every project you're working on copy tmuxinator.yaml into a local copy called ".tmuxinator.yaml" in your project root. Modify it as needed, then start your project from the project root with
+For every project you're working on create a ".tmuxinator.yml" file in your project root. There are example files for you to copy in this repo. Modify it as needed, then start your project from the project root with
 ```
 mux
 ```
-which will load the local file. To kill a project session, then from project root just run
-```
-mux stop .
-```
 
-I like to have tmuxinator start my GUI editor for me as well, but remove that if you'd like to keep them separate.
+which will load the local file and set up your tmux session with the name specified in the .yml configuration file. From here on out you can interact normally with this session through tmux.
+
+To kill a session, run
 
 ```
 mux stop .
 ```
+
+from the project root.
 
 To see existing projects,
 ```
@@ -73,7 +73,11 @@ will
 
 ## Create Links
 
+The install script will create all the symlinks for you.
+
 ```bash
-git clone https://github.com/NoahRJohnson/dotfiles
-dotfiles/setup.sh
+git clone https://github.com/NoahRJohnson/dotfiles ~/.dotfiles
+git submodule init
+git submodule update
+~/.dotfiles/install.sh
 ```

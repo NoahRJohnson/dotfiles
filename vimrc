@@ -436,7 +436,10 @@ let g:alternateExtensions_HXX = "h,H"
 "                        ***  AUTO-PAIRS  ***                             "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-au FileType html,xhtml,markdown let b:AutoPairs = "(:),[:],{:}"
+"au FileType html,xhtml,markdown let b:AutoPairs = {'(':')', '[':']', '{':'}'}
+
+" Turn off quote closing in vim script, since we use quotes for comments
+au FileType vim let b:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'","`":"`", '```':'```',"'''":"'''"}
 
 " highlight and jump between matching angle brackets.
 " This is useful for heavily templated C++
@@ -593,9 +596,9 @@ let g:indent_guides_enable_on_vim_startup = 1
 
 " default toggle is <leader>ig
 " set to 0 to make our own toggle mapping
-let g:indent_guides_default_mapping = 0
-" toggle is now <leader>i - just make sure no other plugins use a <leader>i map or else there will be a delay
-nnoremap <leader>i :IndentGuidesToggle<CR>
+let g:indent_guides_default_mapping = 1
+" just make sure no other plugins use a <leader>i map or else there will be a delay
+"nnoremap <leader>i :IndentGuidesToggle<CR>
 
 " don't display first-level indentation
 let g:indent_guides_start_level = 2
@@ -641,6 +644,9 @@ let g:sneak#use_ic_scs = 1
 
 " start with tree view by default, use i to cycle through view types
 let g:netrw_liststyle = 3
+
+" hide dot files by default, press gh to toggle
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***    ***                         "

@@ -2,15 +2,20 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-git submodule init
-git submodule update
-
 # TERMINAL COLORS
-#git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
+# download a terminal emulator which supports true color
 
 # TMUX ITALICS FIX
 tic $DIR/xterm-24bit
 
-# SYMBOLIC LINKS
-ln -s $DIR/tmux.conf .tmux.conf
+# REMOVE OLD SYMBOLIC LINKS
+rm ~/.bashrc
+rm ~/.tmux.conf
+rm ~/.vimrc
+rm ~/.zshrc
 
+# CREATE NEW SYMBOLIC LINKS
+ln -s $DIR/bashrc ~/.bashrc
+ln -s $DIR/tmux.conf ~/.tmux.conf
+ln -s $DIR/vimrc ~/.vimrc
+ln -s $DIR/zshrc ~/.zshrc

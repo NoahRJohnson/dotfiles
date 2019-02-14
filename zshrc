@@ -82,7 +82,7 @@ alias mux='tmuxinator'
 #    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
 #        eval "$("$BASE16_SHELL/profile_helper.sh")"
 
-# Set zenburn 256-color scheme for dir and ls
+# Set zenburn scheme for dir and ls
 eval $( dircolors -b $HOME/dotfiles/dircolors-zenburn/dircolors )
 alias dir='dir --color'
 alias ls='ls --color'
