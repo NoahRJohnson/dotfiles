@@ -1,0 +1,23 @@
+#https://blog.0x0049.me/problem-with-italicized-text-colors-in-vim-tmux
+
+# Fix italics by making tmux pass the escape codes without interpreting them.
+# Without this you get weirdness like the background and foreground getting swapped.
+#
+# Install:
+#
+# tic -x xterm-24bit
+#
+# Then, in your .tmux.conf:
+#
+#set -g default-terminal "xterm-24bit"
+#set -g terminal-overrides ',xterm-24bit:Tc'
+#
+# newline required at the bottom of this file for some reason, otherwise errors
+
+xterm-24bit|xterm with 24-bit direct color mode,
+   use=xterm-256color,
+   sitm=\E[3m,
+   ritm=\E[23m,
+   setb24=\E[48;2;%p1%{65536}%/%d;%p1%{256}%/%{255}%&%d;%p1%{255}%&%dm,
+   setf24=\E[38;2;%p1%{65536}%/%d;%p1%{256}%/%{255}%&%d;%p1%{255}%&%dm,
+

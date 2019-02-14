@@ -1,0 +1,65 @@
+name: example
+root: ~/your/project/path
+
+# Optional. tmux socket
+# socket_name: foo
+
+# Note that the pre and post options have been deprecated and will be replaced by
+# project hooks.
+
+# Project hooks
+
+# Runs on project start, always
+# on_project_start: command
+
+# Run on project start, the first time
+# on_project_first_start: command
+
+# Run on project start, after the first time
+# on_project_restart: command
+
+# Run on project exit ( detaching from tmux session )
+# on_project_exit: command
+
+# Run on project stop
+# on_project_stop: command
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+pre_window:
+#  - zsh
+#  - pipenv shell
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: tmux -2
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+windows:
+  - editor:
+      - pipenv shell vim .
+  - run:
+      layout: tiled
+      panes:
+        - run_script:
+          - pipenv shell history -s python file_to_run
+        - tail_log:
+          - pipenv shell tail -f your_log_file
+        - static_view_log:
+          - pipenv shell vim -c Ex your_log_folder  # open file explorer
+  - console:
+      layout: even-vertical
+      panes:
+        - general:
+          - pipenv shell ls
+        - python-interpreter:
+          - pipenv shell python
+  - git:
+      layout: even-vertical
+      panes:
+        - pipenv shell git status
+        - pipenv shell git log
+

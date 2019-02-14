@@ -19,12 +19,93 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" solarized colorscheme
+"** COLORSCHEMES **"
+
+" all the base 16 color schemes
+"Plug 'chriskempson/base16-vim'
+" gotham
+Plug 'whatyouhide/vim-gotham'
+" solarized
 Plug 'altercation/vim-colors-solarized'
-" onedark color scheme
+" sorceror
+Plug 'vim-scripts/Sorcerer'
+" onedark
 Plug 'joshdick/onedark.vim'
-" zenburn color scheme
+" zenburn
 Plug 'vim-scripts/Zenburn'
+" monokai
+Plug 'crusoexia/vim-monokai'
+" dracula
+Plug 'dracula/vim',{'as':'dracula'}
+
+"** DISPLAY MODIFIERS **"
+
+" Minimap
+Plug 'severin-lemaignan/vim-minimap'
+" show indentation
+Plug 'nathanaelkane/vim-indent-guides'
+" lightweight status bar
+Plug 'vim-airline/vim-airline'
+" themes for airline
+Plug 'vim-airline/vim-airline-themes'
+" git status in the sign column
+Plug 'airblade/vim-gitgutter'
+" Highlight trailing whitespace
+Plug 'ntpeters/vim-better-whitespace'
+" Color matching parens,braces,etc. with matching colors for better readability
+Plug 'luochen1990/rainbow'
+" Make editing Latex documents nicer
+Plug 'LaTeX-Box-Team/LaTeX-Box'
+
+"** AUTO-COMPLETION **"
+
+" super tab for making YCM and ultisnips work together
+"Plug 'ervandew/supertab'
+" Autocompletion / goto definition / etc.
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
+" Snippet completion
+"Plug 'SirVer/ultisnips'
+"Plug 'honza/vim-snippets'
+" Auto-close quotes, parentheses, brackets, etc.
+Plug 'jiangmiao/auto-pairs'
+
+"** VERBS **"
+
+" Comment text using 'gc'
+Plug 'tpope/vim-commentary'
+" cp copies / cv pastes to system clipboard
+Plug 'christoomey/vim-system-copy'
+" gr replaces text with contents of register
+Plug 'vim-scripts/ReplaceWithRegister'
+
+"** NOUNS **"
+
+" f -> two character f
+Plug 'justinmk/vim-sneak'
+" fzf for fuzzy file searching
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+" The Silver Searcher (grep/ack replacement)
+Plug 'rking/ag.vim'
+
+"** TEXT OBJECTS **"
+
+" s $TARGET $REPLACE selects surrounding brackets, quotes, etc
+" ys adds to surrounding
+Plug 'tpope/vim-surround'
+" Dependency for other text object plugins
+Plug 'kana/vim-textobj-user'
+" ii and ai select a block of code by its indentation level
+Plug 'kana/vim-textobj-indent'
+" 'a$marker' selects all text inside $marker, including the $markers
+Plug 'wellle/targets.vim'
+" ic and ac selects comments
+Plug 'glts/vim-textobj-comment'
+
+
+" Lets . command use plugins
+Plug 'tpope/vim-repeat'
+
 " easy switching between headers and source
 Plug 'vim-scripts/a.vim'
 " protobuf syntax
@@ -33,48 +114,18 @@ Plug 'uarun/vim-protobuf'
 Plug 'sheerun/vim-polyglot'
 " fugitive for git integration
 Plug 'tpope/vim-fugitive'
-" Ctrl-P for fuzzy file searching
-Plug 'kien/ctrlp.vim'
 " undo tree traversal
 Plug 'mbbill/undotree'
-" lightweight status bar
-Plug 'vim-airline/vim-airline'
-" themes for airline
-Plug 'vim-airline/vim-airline-themes'
 " lightweight file manager settings
 Plug 'tpope/vim-vinegar'
 " explore open buffers
 Plug 'jlanzarotta/bufexplorer'
-" f -> two character f
-Plug 'justinmk/vim-sneak'
 " syntax checking
 Plug 'scrooloose/syntastic'
-" super tab for making YCM and ultisnips work together
-Plug 'ervandew/supertab'
-if !has('win32')
-  " Autocompletion / goto definition / etc.
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
-endif
-" Installing this mainly because YouCompleteMe seems to assume its there..
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-" The Silver Searcher (grep/ack replacement)
-Plug 'rking/ag.vim'
 " Convenient mappings for common unixy commands
 Plug 'tpope/vim-eunuch'
-" Color matching parens,braces,etc. with matching colors for better readability
-Plug 'luochen1990/rainbow'
-" Make editing Latex documents nicer
-Plug 'LaTeX-Box-Team/LaTeX-Box'
-" Comment text using 'gc'
-Plug 'tpope/vim-commentary'
-" git status in the sign column
-Plug 'airblade/vim-gitgutter'
-" Highlight trailing whitespace
-Plug 'ntpeters/vim-better-whitespace'
-" Auto-close quotes, parentheses, brackets
-Plug 'Raimondi/delimitMate'
-
+" Provide seamless pane switching with <ctrl-hjkl\>
+Plug 'christoomey/vim-tmux-navigator'
 call plug#end()
 " END PLUGINS
 
@@ -91,10 +142,17 @@ filetype plugin indent on
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " DISPLAY SETTINGS
-"colorscheme onedark     " sets the colorscheme
+" Base16
+" if filereadable(expand("~/.vimrc_background"))
+"   let base16colorspace=256
+"   source ~/.vimrc_background
+" endif
+"set background=dark     " enable for dark terminals
+"set t_Co=256            " enable 256 colors in terminal
+set termguicolors       " enable true color (24-bit color) (needs terminal to support)
+"colorscheme onedark    " sets the colorscheme
 "colorscheme solarized
 colorscheme zenburn
-set background=dark     " enable for dark terminals
 set scrolloff=2         " 2 lines above/below cursor when scrolling
 set showmatch           " show matching bracket (briefly jump)
 set matchtime=2         " reduces matching paren blink time from the 5[00]ms def
@@ -103,7 +161,7 @@ set showcmd             " show typed command in status bar
 set ruler               " show cursor position in status bar
 set title               " show file in titlebar
 set undofile            " stores undo state even when files are closed (in undodir)
-set cursorline          " highlights the current line
+"set cursorline          " highlights the current line
 set winaltkeys=no       " turns of the Alt key bindings to the gui menu
 
 " autocomplete options
@@ -141,6 +199,7 @@ set noshowmode          " don't show the mode ("-- INSERT --") at the bottom
 " MISC SETTINGS
 set mouse=a                " enable mouse in all modes
 set nu                     " turn on line numbers
+set relativenumber         " turn on relative numbers
 set foldlevelstart=99      " all folds open by default
 set nohlsearch             " do not highlight searched-for phrases
 set incsearch              " ...but do highlight-as-I-type the search string
@@ -275,10 +334,13 @@ autocmd FileType text,markdown,gitcommit set nocindent
 map <Space> <leader>
 
 " fast saving
-noremap <leader>w :w<CR>
+noremap <leader>w <ESC>:w<CR>
 
 " fast quit
-nnoremap <leader>q :q<CR>
+nnoremap <leader>q <ESC>:q<CR>
+
+" fast reload
+nnoremap <leader>e <ESC>:e<CR>
 
 " <Leader>cd changes directory to location of current file
 noremap <leader>cd :cd %:p:h<CR>:pwd<CR>
@@ -286,8 +348,10 @@ noremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 " <Leader>z switches to previous buffer
 noremap <leader>z :e#<CR>
 
-" <leader>v brings up .vimrc
-noremap <leader>v :e $MYVIMRC<CR>
+" <leader>v brings up vimrc
+noremap <leader>v <ESC>:e $MYVIMRC<CR>
+" <leader>V sources vimrc, for loading changes
+noremap <silent> <leader>V :source $MYVIMRC<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
 
 " for faster scrolling
 nnoremap J 15gj
@@ -298,14 +362,17 @@ nnoremap <leader>j J
 " likewise for K
 nnoremap <leader>k K
 
+" [S]plit line (sister to [J]oin lines). cc still substitutes the line like S would
+nnoremap S i<CR><Esc>
+
 " These create newlines like o and O but stay in normal mode
 noremap <leader>o o<Esc>k
 noremap <leader>O O<Esc>j
 
-" shortcut for make
-noremap <leader>m :make!<CR>
+" shortcut for Cmake
+noremap <leader>c :Cmake<CR>
 
-nnoremap Y y$            " Y yanks to end of line
+map Y y$            " Y yanks to end of line
 
 " Keep search matches in the middle of the window.
 " zz centers the screen on the cursor, zv unfolds any fold if the cursor
@@ -366,6 +433,16 @@ let g:alternateExtensions_hxx = "h,H"
 let g:alternateExtensions_HXX = "h,H"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                        ***  AUTO-PAIRS  ***                             "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+au FileType html,xhtml,markdown let b:AutoPairs = "(:),[:],{:}"
+
+" highlight and jump between matching angle brackets.
+" This is useful for heavily templated C++
+"au FileType c,cpp let b:AutoPairs = "<:>"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***  BUFEXPLORER  ***                             "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -399,16 +476,6 @@ if executable("ag")
       \ --ignore BoostParts
       \ -g ""'
 endif
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                       ***  DELIMIT MATE  ***                             "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-au FileType html,xhtml,markdown let b:delimitMate_matchpairs = "(:),[:],{:}"
-
-" highlight and jump between matching angle brackets.
-" This is useful for heavily templated C++
-au FileType c,cpp let b:delimitMate_matchpairs = "<:>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                           ***  MUNDO  ***                               "
@@ -464,17 +531,29 @@ let g:syntastic_python_flake8_post_args = '--ignore=E111,E114,E501,E201,E202,W39
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " we can't use <tab> as our snippet key since we use that with YouCompleteMe
-let g:UltiSnipsSnippetsDir         = $HOME . '/vim-config/vim/UltiSnips'
+let g:UltiSnipsSnippetsDir         = $HOME . '/.vim/UltiSnips'
 let g:UltiSnipsListSnippets        = "<c-m-s>"
 let g:UltiSnipsJumpForwardTrigger  = "<right>"
 let g:UltiSnipsJumpBackwardTrigger = "<left>"
+"let g:UltiSnipsExpandTrigger       = "<CR>"
 let g:snips_author                 = 'Strahinja Val Markovic'
+
+" let g:UltiSnipsExpandTrigger = "<nop>"
+" let g:ulti_expand_or_jump_res = 0
+" function ExpandSnippetOrCarriageReturn()
+"     let snippet = UltiSnips#ExpandSnippetOrJump()
+"     if g:ulti_expand_or_jump_res > 0
+"         return snippet
+"     else
+"         return "\<CR>"
+"     endif
+" endfunction
+" inoremap <expr> <CR> pumvisible() ? "\<C-R>=ExpandSnippetOrCarriageReturn()\<CR>" : "\<CR>"
 
 " Generate SPHINX-style (numpy-style) documents in snippets
 let g:ultisnips_python_style = "sphinx"
 
 " better key bindings for UltiSnipsExpandTrigger
-"let g:UltiSnipsExpandTrigger = "<tab>"
 "let g:UltiSnipsJumpForwardTrigger = "<tab>"
 "let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
@@ -497,12 +576,41 @@ nnoremap <leader>y :YcmForceCompileAndDiagnostics<cr>               " compile
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                         ***  VIM-AIRLINE  ***                           "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" powerline fonts only working on mac
-if has('mac')
-  let g:airline_powerline_fonts = 1
-else
-  let g:airline_powerline_fonts = 0
-endif
+
+" Display all buffers when there's only one tab open
+let g:airline#extensions#tabline#enabled = 1
+
+" airline already copies the set colorscheme, but change this
+" if you want a distinct colorscheme for the status
+"set g:AirlineTheme zenburn
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                        ***  VIM-INDENT-GUIDES  ***                      "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" enable by default
+let g:indent_guides_enable_on_vim_startup = 1
+
+" default toggle is <leader>ig
+" set to 0 to make our own toggle mapping
+let g:indent_guides_default_mapping = 0
+" toggle is now <leader>i - just make sure no other plugins use a <leader>i map or else there will be a delay
+nnoremap <leader>i :IndentGuidesToggle<CR>
+
+" don't display first-level indentation
+let g:indent_guides_start_level = 2
+
+" make indentation bars smaller width
+let g:indent_guides_guide_size = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                         ***  VIM-MINIMAP  ***                           "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:minimap_show='<leader>ms'
+let g:minimap_update='<leader>mu'
+let g:minimap_close='<leader>mc'
+let g:minimap_toggle='<leader>mt'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***  VIM-SNEAK  ***                         "
@@ -518,8 +626,21 @@ nmap F <Plug>Sneak_F
 nmap t <Plug>Sneak_t
 nmap T <Plug>Sneak_T
 
-" label mode - minimalist easymotion
-let g:sneak#label = 1
+" minimalist easymotion
+let g:sneak#streak = 1
+
+" allow 'ignorecase' and 'smartcase' settings to determine case-sensitivity
+let g:sneak#use_ic_scs = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                         ***  VIM-VINEGAR  ***                           "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" use - to open netrw file explorer
+" toggle directory banner with I
+
+" start with tree view by default, use i to cycle through view types
+let g:netrw_liststyle = 3
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***    ***                         "
