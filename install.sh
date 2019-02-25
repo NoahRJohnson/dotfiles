@@ -10,12 +10,14 @@ tic $DIR/xterm-24bit
 
 # REMOVE OLD SYMBOLIC LINKS
 rm ~/.bashrc
+rm ~/.inputrc
 rm ~/.tmux.conf
 rm ~/.vimrc
 rm ~/.zshrc
 
 # CREATE NEW SYMBOLIC LINKS
 ln -s $DIR/bashrc ~/.bashrc
+ln -s $DIR/inputrc ~/.inputrc
 ln -s $DIR/tmux.conf ~/.tmux.conf
 ln -s $DIR/vimrc ~/.vimrc
 ln -s $DIR/zshrc ~/.zshrc

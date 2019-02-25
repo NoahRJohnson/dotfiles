@@ -23,7 +23,7 @@ set keymap vi-command
 # which start with the prefix you've entered, rather than just cycling through
 # the last entered commands.
 # In OS X's Terminal.app preferences, I have 'Use option as meta key' off, and
-# have mapped "option cursor up" to "\033\033[A" and "option cursor down" to 
+# have mapped "option cursor up" to "\033\033[A" and "option cursor down" to
 # "\033\033[B".
 # Feel free to bind to whatever you want. Delete the first '\e' in the keymap
 # to set plain up/down to do a history search by default.

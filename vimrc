@@ -40,6 +40,8 @@ Plug 'dracula/vim',{'as':'dracula'}
 
 "** DISPLAY MODIFIERS **"
 
+" NERDTree file explorer
+Plug 'scrooloose/nerdtree'
 " Minimap
 Plug 'severin-lemaignan/vim-minimap'
 " show indentation
@@ -120,12 +122,19 @@ Plug 'mbbill/undotree'
 Plug 'tpope/vim-vinegar'
 " explore open buffers
 Plug 'jlanzarotta/bufexplorer'
-" syntax checking
-Plug 'scrooloose/syntastic'
+" syntax checking and linting
+Plug 'w0rp/ale'
 " Convenient mappings for common unixy commands
 Plug 'tpope/vim-eunuch'
 " Provide seamless pane switching with <ctrl-hjkl\>
 Plug 'christoomey/vim-tmux-navigator'
+
+" These need to be the very last plugins for some reason?
+" Adds support for NerdFont icons
+Plug 'ryanoasis/vim-devicons'
+" Adds syntax highlighting to nerdtree
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+
 call plug#end()
 " END PLUGINS
 
@@ -142,13 +151,20 @@ filetype plugin indent on
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " DISPLAY SETTINGS
+let &t_SI = "\e[6 q"  " | cursor when in insert mode
+let &t_SR = "\e[4 q"  " _ cursor when in replace mode
+let &t_EI = "\e[2 q"  " block cursor otherwise
+" set font for gvim, terminal vim will inherit terminal emulator's font
+if has("gui_running")
+  set guifont=Source\ Code\ Pro\ 14
+endif
 " Base16
 " if filereadable(expand("~/.vimrc_background"))
 "   let base16colorspace=256
 "   source ~/.vimrc_background
 " endif
-"set background=dark     " enable for dark terminals
-"set t_Co=256            " enable 256 colors in terminal
+"set background=dark    " enable for dark terminals
+"set t_Co=256           " enable 256 colors in terminal
 set termguicolors       " enable true color (24-bit color) (needs terminal to support)
 "colorscheme onedark    " sets the colorscheme
 "colorscheme solarized
@@ -314,11 +330,6 @@ if has("multi_byte")
   set fileencodings=ucs-bom,utf-8,latin1
 endif
 
-" this maximizes the gvim window on startup
-
-
-" Sets a font for the GUI
-set guifont=SourceCodePro\ 14
 
 " cindent is a bit too smart for its own good and triggers in text files when
 " you're typing inside parens and then hit enter; it aligns the text with the
@@ -345,8 +356,8 @@ nnoremap <leader>e <ESC>:e<CR>
 " <Leader>cd changes directory to location of current file
 noremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 
-" <Leader>z switches to previous buffer
-noremap <leader>z :e#<CR>
+" <Leader>z saves current buffer then switches to previous buffer
+noremap <leader>z :w<CR>:e#<CR>
 
 " <leader>v brings up vimrc
 noremap <leader>v <ESC>:e $MYVIMRC<CR>
@@ -354,16 +365,15 @@ noremap <leader>v <ESC>:e $MYVIMRC<CR>
 noremap <silent> <leader>V :source $MYVIMRC<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
 
 " for faster scrolling
-nnoremap J 15gj
-nnoremap K 15gk
+noremap J 15gj
+noremap K 15gk
 
 " since we removed J default binding, remap line join to <leader>j
 nnoremap <leader>j J
 " likewise for K
 nnoremap <leader>k K
-
-" [S]plit line (sister to [J]oin lines). cc still substitutes the line like S would
-nnoremap S i<CR><Esc>
+" split line (sister to join lines). cc still substitutes the line like S would
+nnoremap <leader>s i<CR><Esc>
 
 " These create newlines like o and O but stay in normal mode
 noremap <leader>o o<Esc>k
@@ -386,11 +396,14 @@ nnoremap N Nzzzv
 nnoremap g; g;zz
 nnoremap g, g,zz
 
-" Alt to exit insert mode
+" Alt-hjkl to exit insert mode
 inoremap <M-h> <ESC>h
 inoremap <M-j> <ESC>j
 inoremap <M-k> <ESC>k
 inoremap <M-l> <ESC>l
+
+" Enter to exit insert mode
+inoremap <CR> <ESC>
 
 " Use Escape to exit terminal mode (neovim only)
 if has('nvim')
@@ -403,18 +416,18 @@ endif
 nnoremap ' `
 nnoremap ` '
 
+" tmux-navigator does this
 " simplify moving between windows
-noremap <C-h> <C-w>h
-noremap <C-l> <C-w>l
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
+" map <C-h> <C-w>h
+" map <C-l> <C-w>l
+" map <C-j> <C-w>j
+" map <C-k> <C-w>k
 
 " Using '<' and '>' in visual mode to shift code by a tab-width left/right by
 " default exits visual mode. With this mapping we remain in visual mode after
 " such an operation.
 vnoremap < <gv
 vnoremap > >gv
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***  PLUGIN SETTINGS  ***                         "
@@ -433,24 +446,59 @@ let g:alternateExtensions_hxx = "h,H"
 let g:alternateExtensions_HXX = "h,H"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                             ***  ALE  ***                               "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" automatically populate vim's location list with errors
+" let g:syntastic_always_populate_loc_list=1
+" let g:syntastic_auto_loc_list = 0
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+
+" use flake8 for python code
+let g:ale_linters = {'python': ['flake8']}
+
+" ignore these pep8 warnings:
+" E111: indents not a multiple of four
+" E114: indents not a multiple of four (for a comment)
+" E201: whitespace after '('
+" E202: whitespace before ')'
+" E221: missing whitespace around operator
+" E225: missing whitespace around operator
+" E226: missing whitespace around operator
+" E227: missing whitespace around operator
+" E228: missing whitespace around operator
+" E231: missing whitespace after ','
+" E266: too many leading '#' for block comment
+" E501: lines over 80 characters
+" W391: blank lines at eof
+"let g:ale_python_flake8_options = '--ignore=E501,E201,E202,E221,E225,E226,E227,E228,E231,W391'
+let g:ale_python_flake8_options = '--ignore=E111,E114,E201,E202,E266,E501,W391'
+
+let g:ale_fixers = {'python': ['isort']}
+
+" Run ale fixer on saving
+let g:ale_fix_on_save = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                        ***  AUTO-PAIRS  ***                             "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"au FileType html,xhtml,markdown let b:AutoPairs = {'(':')', '[':']', '{':'}'}
+"au FileType html,xhtml,markdown let g:AutoPairs = {'(':')', '[':']', '{':'}'}
 
 " Turn off quote closing in vim script, since we use quotes for comments
-au FileType vim let b:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'","`":"`", '```':'```',"'''":"'''"}
+au FileType vim let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'","`":"`", '```':'```',"'''":"'''"}
 
 " highlight and jump between matching angle brackets.
 " This is useful for heavily templated C++
-"au FileType c,cpp let b:AutoPairs = "<:>"
+"au FileType c,cpp let g:AutoPairs = "<:>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***  BUFEXPLORER  ***                             "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" <Leader>b loads bufexplorer
-noremap <silent> <leader>b :BufExplorer<CR>
+" <Leader>b saves current buffer then loads bufexplorer
+noremap <silent> <leader>b :w<CR>:BufExplorer<CR>
 " disable default mappings so vim doesn't wait to see if <Leader>b[x] is going to be pressed
 let g:bufExplorerDisableDefaultKeyMapping=1
 
@@ -492,42 +540,26 @@ set undodir=~/.vim/undo
 nnoremap <leader>u :MundoToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                          ***  NERDTREE  ***                             "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" open NERDTree automatically when vim starts up
+"autocmd vimenter * NERDTree
+"
+
+" <leader>n toggles nerdtree window, opens on current file
+nnoremap <leader>n :NERDTreeToggle %<CR>
+
+" close nerdtree window after opening a file with any of o,i,t,T
+let g:NERDTreeQuitOnOpen = 1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                          ***  RAINBOW  ***                              "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let g:rainbow_active=1                  " on by default
 nnoremap <leader>r :RainbowToggle<CR>   " toggle with <leader>r
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          ***  SYNTASTIC  ***                            "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" automatically populate vim's location list with errors
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-" uncomment below to use 4 space indents in python, instead of 2
-"autocmd FileType python setlocal shiftwidth=4 tabstop=4
-
-" use the pylint and pep8 checkers for python code
-let g:syntastic_python_checkers = ['flake8']
-" ignore pep8 warnings:
-" E111: indents not a multiple of four
-" E114: indents not a multiple of four (for a comment)
-" E501: lines over 80 characters
-" E201: whitespace after '('
-" E202: whitespace before ')'
-" E221: missing whitespace around operator
-" E225: missing whitespace around operator
-" E226: missing whitespace around operator
-" E227: missing whitespace around operator
-" E228: missing whitespace around operator
-" E231: msising whitespace after ','
-" W391: blank lines at eof
-"let g:syntastic_python_flake8_post_args = '--ignore=E501,E201,E202,E221,E225,E226,E227,E228,E231,W391'
-let g:syntastic_python_flake8_post_args = '--ignore=E111,E114,E501,E201,E202,W391'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                          ***  ULTISNIPS  ***                            "
@@ -588,6 +620,16 @@ let g:airline#extensions#tabline#enabled = 1
 "set g:AirlineTheme zenburn
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                         ***  VIM-DEVICONS  ***                           "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" show glyphs
+set encoding=utf8
+
+" vim-airline support for nerdfont
+let g:airline_powerline_fonts = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                        ***  VIM-INDENT-GUIDES  ***                      "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -610,13 +652,14 @@ let g:indent_guides_guide_size = 1
 "                         ***  VIM-MINIMAP  ***                           "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" <leader>mt to toggle
 let g:minimap_show='<leader>ms'
 let g:minimap_update='<leader>mu'
 let g:minimap_close='<leader>mc'
 let g:minimap_toggle='<leader>mt'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                       ***  VIM-SNEAK  ***                         "
+"                          ***  VIM-SNEAK  ***                            "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " these are the defaults. you can change them if you want to keep the default 's' map
@@ -634,6 +677,13 @@ let g:sneak#streak = 1
 
 " allow 'ignorecase' and 'smartcase' settings to determine case-sensitivity
 let g:sneak#use_ic_scs = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                         ***  VIM-VINEGAR  ***                           "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Write all buffers before navigating from Vim to tmux pane
+let g:tmux_navigator_save_on_switch = 2
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                         ***  VIM-VINEGAR  ***                           "
