@@ -36,7 +36,15 @@ Most distros already have vim installed.
 
 Vim-plug should be automatically downloaded when you first run vim with this vimrc. Run :PlugInstall from inside a vim instance to install plugins.
 
+### Linting
 Install [flake8](https://pypi.org/project/flake8/) to support Vim python linting.
+
+### YouCompleteMe
+For every cpp project, add the line
+```
+set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
+```
+to your CMakeLists.txt CMake file. This will generate a compile_commands.json file when you run cmake. Copy that file into your project root. YCM will then automatically load this clang compilation database when you run vim.
 
 ## Tmuxinator
 A tool for automating tmux setup.
@@ -58,35 +66,24 @@ mux doctor
 You should see all "YES".
 
 For every project you're working on create a ".tmuxinator.yml" file in your project root. There are example files for you to copy in this repo. Modify it as needed, then start your project from the project root with
-```
+```bash
 mux
 ```
 
-which will load the local file and set up your tmux session with the name specified in the .yml configuration file. From here on out you can interact normally with this session through tmux.
+which will load the local file and set up your tmux session with the name specified in the .yml configuration file. From here on out you can interact normally with this session through tmux. The default way to exit tmux is "Ctrl-b d". "mux" can also be used to re-attach to a session.
 
 To kill a session, run
-
 ```
 mux stop .
 ```
-
 from the project root.
 
-To see existing projects,
+
+I've yet to figure out how to allow
 ```
 mux ls
-```
-If you end up closing tmux but want to re-attach to your session, use
-```
-mux ls
-```
-to see existing projects, and
-```
 mux start $PROJECT_NAME
-```
-to re-attach.
-```
 mux stop $PROJECT_NAME
 ```
-will 
+to work when using local config files like this. Personally I'm ok with always having to navigate to a project's root to start the tmux dev environment. If you aren't look into symbolically linking the local files to ~/.tmuxinator/<projectname>.yml
 

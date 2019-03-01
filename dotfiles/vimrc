@@ -23,20 +23,22 @@ call plug#begin('~/.vim/plugged')
 
 " all the base 16 color schemes
 "Plug 'chriskempson/base16-vim'
-" gotham
-Plug 'whatyouhide/vim-gotham'
-" solarized
-Plug 'altercation/vim-colors-solarized'
-" sorceror
-Plug 'vim-scripts/Sorcerer'
-" onedark
-Plug 'joshdick/onedark.vim'
-" zenburn
-Plug 'vim-scripts/Zenburn'
-" monokai
-Plug 'crusoexia/vim-monokai'
 " dracula
 Plug 'dracula/vim',{'as':'dracula'}
+" gotham
+Plug 'whatyouhide/vim-gotham'
+" lucius
+Plug 'jonathanfilip/vim-lucius'
+" monokai
+Plug 'crusoexia/vim-monokai'
+" onedark
+Plug 'joshdick/onedark.vim'
+" solarized
+Plug 'altercation/vim-colors-solarized'
+" sorcerer
+Plug 'vim-scripts/Sorcerer'
+" zenburn
+Plug 'vim-scripts/Zenburn'
 
 "** DISPLAY MODIFIERS **"
 
@@ -52,6 +54,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " git status in the sign column
 Plug 'airblade/vim-gitgutter'
+" Make tmux status line look like vim status line
+Plug 'edkolev/tmuxline.vim'
 " Highlight trailing whitespace
 Plug 'ntpeters/vim-better-whitespace'
 " Color matching parens,braces,etc. with matching colors for better readability
@@ -82,7 +86,8 @@ Plug 'vim-scripts/ReplaceWithRegister'
 
 "** NOUNS **"
 
-" f -> two character f
+" s -> two character f
+" Gives s,f,t a minimal easymotion
 Plug 'justinmk/vim-sneak'
 " fzf for fuzzy file searching
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -119,7 +124,7 @@ Plug 'tpope/vim-fugitive'
 " undo tree traversal
 Plug 'mbbill/undotree'
 " lightweight file manager settings
-Plug 'tpope/vim-vinegar'
+" Plug 'tpope/vim-vinegar'
 " explore open buffers
 Plug 'jlanzarotta/bufexplorer'
 " syntax checking and linting
@@ -163,12 +168,14 @@ endif
 "   let base16colorspace=256
 "   source ~/.vimrc_background
 " endif
-"set background=dark    " enable for dark terminals
-"set t_Co=256           " enable 256 colors in terminal
+" set background=dark    " enable for dark terminals
+" set t_Co=256           " enable 256 colors in terminal
 set termguicolors       " enable true color (24-bit color) (needs terminal to support)
-"colorscheme onedark    " sets the colorscheme
-"colorscheme solarized
+" colorscheme onedark    " sets the colorscheme
+" colorscheme solarized
 colorscheme zenburn
+" colorscheme lucius
+" LuciusDarkLowContrast
 set scrolloff=2         " 2 lines above/below cursor when scrolling
 set showmatch           " show matching bracket (briefly jump)
 set matchtime=2         " reduces matching paren blink time from the 5[00]ms def
@@ -345,7 +352,7 @@ autocmd FileType text,markdown,gitcommit set nocindent
 map <Space> <leader>
 
 " fast saving
-noremap <leader>w <ESC>:w<CR>
+nnoremap <leader>w <ESC>:w<CR>
 
 " fast quit
 nnoremap <leader>q <ESC>:q<CR>
@@ -354,10 +361,13 @@ nnoremap <leader>q <ESC>:q<CR>
 nnoremap <leader>e <ESC>:e<CR>
 
 " <Leader>cd changes directory to location of current file
-noremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 
-" <Leader>z saves current buffer then switches to previous buffer
-noremap <leader>z :w<CR>:e#<CR>
+" <Leader>z switches to previous buffer
+noremap <leader>z :e#<CR>
+
+" <Leader>x deletes current buffer
+noremap <leader>x :bd<CR>
 
 " <leader>v brings up vimrc
 noremap <leader>v <ESC>:e $MYVIMRC<CR>
@@ -416,7 +426,7 @@ endif
 nnoremap ' `
 nnoremap ` '
 
-" tmux-navigator does this
+" vim-tmux-navigator does this
 " simplify moving between windows
 " map <C-h> <C-w>h
 " map <C-l> <C-w>l
@@ -446,8 +456,38 @@ let g:alternateExtensions_hxx = "h,H"
 let g:alternateExtensions_HXX = "h,H"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                            ***  AG  ***                                 "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" fuzzy file searching via ctrl-P
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+
+" <Leader>p shortcut
+nnoremap <leader>p <C-p>
+" use nearest ancestor containing .git file, or cwd
+let g:ctrlp_working_path_mode = 'ra'
+
+" use the silver searcher if available
+if executable("ag")
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+      \ --ignore .git
+      \ --ignore .svn
+      \ --ignore .hg
+      \ --ignore .DS_Store
+      \ --ignore "**/*.pyc"
+      \ --ignore BoostParts
+      \ -g ""'
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             ***  ALE  ***                               "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" analog of n and N for navigating to linting errors
+nnoremap <leader>a :ALENextWrap<cr>
+nnoremap <leader>A :ALEPreviousWrap<cr>
 
 " automatically populate vim's location list with errors
 " let g:syntastic_always_populate_loc_list=1
@@ -470,10 +510,11 @@ let g:ale_linters = {'python': ['flake8']}
 " E228: missing whitespace around operator
 " E231: missing whitespace after ','
 " E266: too many leading '#' for block comment
+" E303: too many blank lines
 " E501: lines over 80 characters
 " W391: blank lines at eof
 "let g:ale_python_flake8_options = '--ignore=E501,E201,E202,E221,E225,E226,E227,E228,E231,W391'
-let g:ale_python_flake8_options = '--ignore=E111,E114,E201,E202,E266,E501,W391'
+let g:ale_python_flake8_options = '--ignore=E111,E114,E201,E202,E266,E303,E501,W391'
 
 let g:ale_fixers = {'python': ['isort']}
 
@@ -503,32 +544,6 @@ noremap <silent> <leader>b :w<CR>:BufExplorer<CR>
 let g:bufExplorerDisableDefaultKeyMapping=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                          ***  CTRLP  ***                                "
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" fuzzy file searching via ctrl-P
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-
-" <Leader>p shortcut
-nnoremap <leader>p <C-p>
-" use nearest ancestor containing .git file, or cwd
-let g:ctrlp_working_path_mode = 'ra'
-
-" use the silver searcher if available
-if executable("ag")
-  set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
-      \ --ignore .git
-      \ --ignore .svn
-      \ --ignore .hg
-      \ --ignore .DS_Store
-      \ --ignore "**/*.pyc"
-      \ --ignore BoostParts
-      \ -g ""'
-endif
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                           ***  MUNDO  ***                               "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -547,8 +562,8 @@ nnoremap <leader>u :MundoToggle<CR>
 "autocmd vimenter * NERDTree
 "
 
-" <leader>n toggles nerdtree window, opens on current file
-nnoremap <leader>n :NERDTreeToggle %<CR>
+" <leader>n opens nerdtree window on current buffer
+nnoremap <leader>n :NERDTreeFind<CR>
 
 " close nerdtree window after opening a file with any of o,i,t,T
 let g:NERDTreeQuitOnOpen = 1
@@ -558,7 +573,7 @@ let g:NERDTreeQuitOnOpen = 1
 "                          ***  RAINBOW  ***                              "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let g:rainbow_active=1                  " on by default
+let g:rainbow_active=0                  " off by default
 nnoremap <leader>r :RainbowToggle<CR>   " toggle with <leader>r
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -617,7 +632,7 @@ let g:airline#extensions#tabline#enabled = 1
 
 " airline already copies the set colorscheme, but change this
 " if you want a distinct colorscheme for the status
-"set g:AirlineTheme zenburn
+let g:airline_theme='lucius'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                         ***  VIM-DEVICONS  ***                           "
@@ -679,7 +694,7 @@ let g:sneak#streak = 1
 let g:sneak#use_ic_scs = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                         ***  VIM-VINEGAR  ***                           "
+"                         ***  VIM-TMUX-NAVIGATOR  ***                           "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Write all buffers before navigating from Vim to tmux pane
@@ -693,10 +708,10 @@ let g:tmux_navigator_save_on_switch = 2
 " toggle directory banner with I
 
 " start with tree view by default, use i to cycle through view types
-let g:netrw_liststyle = 3
+" let g:netrw_liststyle = 3
 
 " hide dot files by default, press gh to toggle
-let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+" let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                       ***    ***                         "

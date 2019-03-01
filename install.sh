@@ -5,19 +5,23 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # TERMINAL COLORS
 # download a terminal emulator which supports true color
 
-# TMUX ITALICS FIX
+# tmux italics fix
 tic $DIR/xterm-24bit
 
-# REMOVE OLD SYMBOLIC LINKS
-rm ~/.bashrc
-rm ~/.inputrc
-rm ~/.tmux.conf
-rm ~/.vimrc
-rm ~/.zshrc
+for dotfile in "$DIR"/dotfiles/*; do
+  fname=$(basename "$dotfile")
 
-# CREATE NEW SYMBOLIC LINKS
-ln -s $DIR/bashrc ~/.bashrc
-ln -s $DIR/inputrc ~/.inputrc
-ln -s $DIR/tmux.conf ~/.tmux.conf
-ln -s $DIR/vimrc ~/.vimrc
-ln -s $DIR/zshrc ~/.zshrc
+  target=~/."$fname"
+  copy_target="$DIR"/stash/"$fname"
+
+  # stash old dotfiles
+  if [[ -e $target ]]
+  then
+    cp $target $copy_target
+    rm $target
+  fi
+
+  # create new symbolic links
+  ln -s "$dotfile" "$target"
+done
+

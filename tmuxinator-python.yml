@@ -25,7 +25,7 @@ root: .
 # on_project_stop: command
 
 # Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
-pre_window:
+# pre_window:
 #  - zsh
 #  - pipenv shell
 
