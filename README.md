@@ -7,9 +7,7 @@
 The install script will create all the symlinks for you.
 
 ```bash
-git clone https://github.com/NoahRJohnson/dotfiles ~/.dotfiles
-git submodule init
-git submodule update
+git clone --recurse-submodules https://github.com/NoahRJohnson/dotfiles ~/.dotfiles
 ~/.dotfiles/install.sh
 ```
 
