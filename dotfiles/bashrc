@@ -1,5 +1,8 @@
 # .bashrc
 
+# Set VIM mode
+set -o vi
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
@@ -29,3 +32,27 @@ alias mux='tmuxinator'
 
 # Fuzzy find
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# NAME
+#   autojust - Auto source your just setup file, and start using just
+function just()
+{
+  if [[ $(type -at just) == *file* ]]; then
+    unset just
+    command just ${@+"${@}"}
+  elif [ -e setup.env ]; then
+    . setup.env
+    unset just
+    just ${@+"${@}"}
+  elif [ "${PWD}" != "/" ]; then
+    pushd .. >& /dev/null
+    just ${@+"${@}"}
+    popd >& /dev/null
+  else
+    command just ${@+"${@}"}
+  fi
+}
+
+alias andymode='gnome-terminal -- env INPUTRC=/dev/null bash'
+alias ssh2="ssh -o ControlPath=none"
+alias ssh_close='ssh -O exit'

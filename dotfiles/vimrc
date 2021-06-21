@@ -73,7 +73,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
 "Plug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
 " Auto-close quotes, parentheses, brackets, etc.
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
 
 "** VERBS **"
 
@@ -197,6 +197,7 @@ set completeopt=menu,menuone,longest
 set switchbuf=useopen,usetab
 
 " EDITOR SETTINGS
+set autowriteall        " auto write buffers when switching
 set ignorecase          " case insensitive searching
 set smartcase           " but become case sensitive if you type uppercase characters
 " this can cause problems with other filetypes
@@ -221,8 +222,8 @@ set noshowmode          " don't show the mode ("-- INSERT --") at the bottom
 
 " MISC SETTINGS
 set mouse=a                " enable mouse in all modes
-set nu                     " turn on line numbers
-set relativenumber         " turn on relative numbers
+set number relativenumber  " turn on hybrid line numbers (relative + current line absolute)
+:command Andy set rnu!     " Andy doesn't like relative numbers, this option will toggle them
 set foldlevelstart=99      " all folds open by default
 set nohlsearch             " do not highlight searched-for phrases
 set incsearch              " ...but do highlight-as-I-type the search string
@@ -317,7 +318,7 @@ set t_ZH=[3m
 set t_ZR=[23m
 
 " comments look nice in italics
-highlight Comment cterm=italic
+" highlight Comment cterm=italic
 
 
 " filename *.md  => markdown filetype
@@ -352,13 +353,13 @@ autocmd FileType text,markdown,gitcommit set nocindent
 map <Space> <leader>
 
 " fast saving
-nnoremap <leader>w <ESC>:w<CR>
+nnoremap <leader>w :w<CR>
 
 " fast quit
-nnoremap <leader>q <ESC>:q<CR>
+nnoremap <leader>q :q<CR>
 
 " fast reload
-nnoremap <leader>e <ESC>:e<CR>
+nnoremap <leader>e :e<CR>
 
 " <Leader>cd changes directory to location of current file
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
@@ -388,6 +389,9 @@ nnoremap <leader>s i<CR><Esc>
 " These create newlines like o and O but stay in normal mode
 noremap <leader>o o<Esc>k
 noremap <leader>O O<Esc>j
+
+" Enter a space without leaving normal mode
+nnoremap <leader><leader> i<Space><Esc>
 
 " shortcut for Cmake
 noremap <leader>c :Cmake<CR>
@@ -460,26 +464,26 @@ let g:alternateExtensions_HXX = "h,H"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " fuzzy file searching via ctrl-P
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
+" let g:ctrlp_map = '<c-p>'
+" let g:ctrlp_cmd = 'CtrlP'
 
-" <Leader>p shortcut
-nnoremap <leader>p <C-p>
-" use nearest ancestor containing .git file, or cwd
-let g:ctrlp_working_path_mode = 'ra'
+" " <Leader>p shortcut
+" nnoremap <leader>p <C-p>
+" " use nearest ancestor containing .git file, or cwd
+" let g:ctrlp_working_path_mode = 'ra'
 
-" use the silver searcher if available
-if executable("ag")
-  set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
-      \ --ignore .git
-      \ --ignore .svn
-      \ --ignore .hg
-      \ --ignore .DS_Store
-      \ --ignore "**/*.pyc"
-      \ --ignore BoostParts
-      \ -g ""'
-endif
+" " use the silver searcher if available
+" if executable("ag")
+"   set grepprg=ag\ --nogroup\ --nocolor
+"   let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+"       \ --ignore .git
+"       \ --ignore .svn
+"       \ --ignore .hg
+"       \ --ignore .DS_Store
+"       \ --ignore "**/*.pyc"
+"       \ --ignore BoostParts
+"       \ -g ""'
+" endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             ***  ALE  ***                               "
@@ -501,22 +505,24 @@ let g:ale_linters = {'python': ['flake8']}
 " ignore these pep8 warnings:
 " E111: indents not a multiple of four
 " E114: indents not a multiple of four (for a comment)
+" E121: continuation line under-indented for hanging indent
+" E129: visually indented line with same indent as next logical line
 " E201: whitespace after '('
 " E202: whitespace before ')'
-" E221: missing whitespace around operator
-" E225: missing whitespace around operator
-" E226: missing whitespace around operator
-" E227: missing whitespace around operator
-" E228: missing whitespace around operator
-" E231: missing whitespace after ','
+" E221: multiple spaces before operator
+" E222: multiple spaces after operator
+" E241: multiple spaces after ','
+" E251: unexpected spaces around keyword / parameter equals
 " E266: too many leading '#' for block comment
 " E303: too many blank lines
 " E501: lines over 80 characters
+" E701: multiple statements on one line (colon)
+" E722: do not use bare 'except'
 " W391: blank lines at eof
 "let g:ale_python_flake8_options = '--ignore=E501,E201,E202,E221,E225,E226,E227,E228,E231,W391'
-let g:ale_python_flake8_options = '--ignore=E111,E114,E201,E202,E266,E303,E501,W391'
+let g:ale_python_flake8_options = '--ignore=E111,E114,E121,E125,E126,E129,E201,E202,E221,E222,E241,E251,E266,E303,E501,E701,E722,W391'
 
-let g:ale_fixers = {'python': ['isort']}
+" let g:ale_fixers = {'python': ['isort']}
 
 " Run ale fixer on saving
 let g:ale_fix_on_save = 1
@@ -528,7 +534,7 @@ let g:ale_fix_on_save = 1
 "au FileType html,xhtml,markdown let g:AutoPairs = {'(':')', '[':']', '{':'}'}
 
 " Turn off quote closing in vim script, since we use quotes for comments
-au FileType vim let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'","`":"`", '```':'```',"'''":"'''"}
+" au FileType vim let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'","`":"`", '```':'```',"'''":"'''"}
 
 " highlight and jump between matching angle brackets.
 " This is useful for heavily templated C++
@@ -542,6 +548,22 @@ au FileType vim let g:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'","`":"`", '`
 noremap <silent> <leader>b :w<CR>:BufExplorer<CR>
 " disable default mappings so vim doesn't wait to see if <Leader>b[x] is going to be pressed
 let g:bufExplorerDisableDefaultKeyMapping=1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                           ***  FZF  ***                                 "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" <leader>p as Ctrl-P analog to search files
+nnoremap <leader>p :FZF<CR>
+
+" <leader>f for "find" which searches within files using the silver searcher
+nnoremap <leader>f :Ag! -Q 
+
+" Hide status line of current buffer when fzf opens underneath (fzf window
+" will have the status line replicated)
+autocmd! FileType fzf
+autocmd  FileType fzf set laststatus=0 noshowmode noruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                           ***  MUNDO  ***                               "
@@ -619,6 +641,7 @@ let g:ultisnips_python_style = "sphinx"
 "let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 "let g:SuperTabDefaultCompletionType = '<C-n>'
 
+let g:ycm_server_python_interpreter = '/usr/bin/python'
 
 nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>  " goto definition
 nnoremap <leader>y :YcmForceCompileAndDiagnostics<cr>               " compile
@@ -648,8 +671,8 @@ let g:airline_powerline_fonts = 1
 "                        ***  VIM-INDENT-GUIDES  ***                      "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" enable by default
-let g:indent_guides_enable_on_vim_startup = 1
+" disable by default
+let g:indent_guides_enable_on_vim_startup = 0
 
 " default toggle is <leader>ig
 " set to 0 to make our own toggle mapping
