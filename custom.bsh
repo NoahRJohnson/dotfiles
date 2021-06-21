@@ -1,0 +1,12 @@
+function setup()
+{
+  # tmux italics fix
+  # might mess up xterm so I'm commenting it out
+  # tic $DIR/xterm-24bit
+  :
+}
+
+function unsetup()
+{
+  :
+}
