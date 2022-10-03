@@ -22,7 +22,7 @@ export EDITOR="vim"
 #         eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 # Set zenburn scheme for dir and ls
-eval $( dircolors -b $HOME/.dotfiles/dircolors-zenburn/dircolors )
+eval $( TERM=xterm-256color dircolors -b ~/.dot/dircolors-zenburn/dircolors )
 alias dir='dir --color'
 alias ls='ls --color'
 

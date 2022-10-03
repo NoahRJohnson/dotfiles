@@ -3,7 +3,47 @@ function setup()
   # tmux italics fix
   # might mess up xterm so I'm commenting it out
   # tic $DIR/xterm-24bit
-  :
+
+  #tic -x -o ~/.terminfo
+
+  if [ ! -f ~/bin/aws ]; then
+  case "${DOT_OS}" in
+    linux)
+      tempdir="$(mktemp -d)"
+      download_to_file https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip "${tempdir}/awscli.zip"
+      pushd "${tempdir}" &> /dev/null
+        unzip awscli.zip
+        ./aws/install -i ~/awscli -b ~/bin/
+      popd
+      rm -r "${tempdir}"
+      ;;
+    windows)
+      msiexec /ju https://awscli.amazonaws.com/AWSCLIV2.msi "AWSCLIV2=C:\Users\andy\awscli"
+      ;;
+    macos)
+      download_to_file https://awscli.amazonaws.com/AWSCLIV2.pkg aws.pkg
+      echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+  <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+  <plist version=\"1.0\">
+  <array>
+    <dict>
+      <key>choiceAttribute</key>
+      <string>customLocation</string>
+      <key>attributeSetting</key>
+      <string>"~"</string>
+      <key>choiceIdentifier</key>
+      <string>default</string>
+    </dict>
+  </array>
+  </plist>" > aws.xml
+        installer -pkg aws.pkg \
+            -target ~/awscli \
+            -applyChoiceChangesXML aws.xml
+        rm aws.pkg aws.xml
+        ;;
+    esac
+  fi
+
 }
 
 function unsetup()

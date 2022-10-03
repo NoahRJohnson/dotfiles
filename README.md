@@ -1,15 +1,15 @@
-# dotfiles
-* vimrc
-* inputrc
+# My dot files
 
-## Install
+Here are my dot files
 
-The install script will create all the symlinks for you.
+See https://github.com/andyneff/dot_core for more info, including how to use this pattern for yourself.
 
-```bash
-git clone --recurse-submodules https://github.com/NoahRJohnson/dotfiles ~/.dotfiles
-~/.dotfiles/install.sh
-```
+# Setting up on a new computer
+
+1. `git clone https://github.com/NoahRJohnson/dotfiles.git ~/.dot`
+2. `~/.dot/install.bsh`
+
+All files in the files/ directory will be symlinked into your host computer.
 
 ## Terminal Emulator
 
@@ -47,15 +47,7 @@ to your CMakeLists.txt CMake file. This will generate a compile_commands.json fi
 ## Tmuxinator
 A tool for automating tmux setup.
 
-Install ruby gem installer with your package manager, e.g.:
-```bash
-sudo dnf install gem
-```
-
-Then install tmuxinator with
-```
-gem install tmuxinator
-```
+Run setup_tmuxinator.bsh to install gem and tmuxinator.
 
 This will ensure you get the most up-to-date version. Check that it was set up correctly by running:
 ```
@@ -63,7 +55,7 @@ mux doctor
 ```
 You should see all "YES".
 
-For every project you're working on create a ".tmuxinator.yml" file in your project root. There are example files for you to copy in this repo. Modify it as needed, then start your project from the project root with
+For every project you're working on create a ".tmuxinator.yml" file in your project root. "tmuxinator.yml" is an example file for you to start from. Modify it as needed, then start your project from the project root with
 ```bash
 mux
 ```
