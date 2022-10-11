@@ -6,8 +6,8 @@ See https://github.com/andyneff/dot_core for more info, including how to use thi
 
 # Setting up on a new computer
 
-1. `git clone https://github.com/NoahRJohnson/dotfiles.git ~/.dot`
-2. `~/.dot/install.bsh`
+1. `git clone https://github.com/NoahRJohnson/dotfiles.git ~/.dotfiles`
+2. `~/.dotfiles/install.bsh`
 
 All files in the files/ directory will be symlinked into your host computer.
 
